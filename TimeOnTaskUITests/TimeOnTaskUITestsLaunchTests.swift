@@ -9,6 +9,7 @@ import XCTest
 
 final class TimeOnTaskUITestsLaunchTests: XCTestCase {
 
+    // Tells XCTest to run this launch screenshot test across configured UI appearances.
     override class var runsForEachTargetApplicationUIConfiguration: Bool {
         true
     }
@@ -19,6 +20,7 @@ final class TimeOnTaskUITestsLaunchTests: XCTestCase {
 
     @MainActor
     func testLaunch() throws {
+        // Application handle used to launch and screenshot the app under test.
         let app = XCUIApplication()
         app.launch()
 
@@ -27,6 +29,7 @@ final class TimeOnTaskUITestsLaunchTests: XCTestCase {
         // XCUIAutomation Documentation
         // https://developer.apple.com/documentation/xcuiautomation
 
+        // Screenshot attachment kept with the test result for launch screen review.
         let attachment = XCTAttachment(screenshot: app.screenshot())
         attachment.name = "Launch Screen"
         attachment.lifetime = .keepAlways

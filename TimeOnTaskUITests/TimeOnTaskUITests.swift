@@ -25,6 +25,7 @@ final class TimeOnTaskUITests: XCTestCase {
     @MainActor
     func testExample() throws {
         // UI tests must launch the application that they test.
+        // Application handle used to launch and inspect the app under test.
         let app = XCUIApplication()
         app.launch()
 
