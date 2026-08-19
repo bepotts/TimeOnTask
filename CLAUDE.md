@@ -1,0 +1,46 @@
+# CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+
+## What this is
+
+TimeOnTask ("Ember") is a native **macOS** app (SwiftUI, `SDKROOT = macosx`) — despite living under an `ios/` directory on disk, it is not an iOS project. It's a menu-bar focus timer: a main window plus a `MenuBarExtra` popover, both driven by one shared timer engine.
+
+## Commands
+
+Build and test via `xcodebuild` (scheme: `TimeOnTask`):
+
+```bash
+xcodebuild -scheme TimeOnTask -project TimeOnTask.xcodeproj build
+```
+
+```bash
+xcodebuild -scheme TimeOnTask -project TimeOnTask.xcodeproj test
+```
+
+Run a single test (Swift Testing framework, used by `TimeOnTaskTests`):
+
+```bash
+xcodebuild -scheme TimeOnTask -project TimeOnTask.xcodeproj test -only-testing:TimeOnTaskTests/TimeOnTaskTests/presetChangesRemainingWhileIdle
+```
+
+Run just the UI tests target (XCTest):
+
+```bash
+xcodebuild -scheme TimeOnTask -project TimeOnTask.xcodeproj test -only-testing:TimeOnTaskUITests
+```
+
+There is no SPM `Package.swift` or separate lint config — this is a plain Xcode project (`TimeOnTask.xcodeproj`).
+
+## Architecture
+
+**Single source of truth:** `TimerEngine` (`TimeOnTask/Core/TimerEngine.swift`) is the one `@MainActor` `ObservableObject` created in `TimeOnTaskApp` and injected via `.environmentObject` into *both* scenes (`WindowGroup` and `MenuBarExtra`). There is no per-view state duplication — the main window and the menu bar popover are just two renderings of the same engine.
+
+- **Phase state machine**: `TimerPhase` is `.idle → .running ⇄ .paused → .complete → .idle`. All views branch on `engine.phase` to decide which controls to show (see the `controls` computed views in `ContentView` and `MenuBarContentView`, which are structurally duplicated between the two).
+- **Wall-clock timing, not tick-counting**: running state is tracked via an `endDate` (`Date`), and a 0.25s repeating `Timer` just recomputes `remaining = endDate.timeIntervalSinceNow`. This means pause/resume and elapsed time stay correct across sleep/backgrounding without drift accumulation from tick counting.
+- **Views are dumb**: `TimerDialView` (the circular progress ring), `ContentView` (main window), and `MenuBarContentView`/`MenuBarLabel` (menu bar) only read `engine` and call its methods (`start`, `pause`, `stop`, `selectPreset`, `startAnother`); no view owns timer logic itself.
+- **Side effects live in `NotificationManager`** (`TimeOnTask/Services/NotificationManager.swift`), a plain singleton (not an `ObservableObject`) that `TimerEngine.complete()` calls directly to fire a `UNUserNotificationCenter` alert and play a system sound.
+- **Styling is centralized** in `TimeOnTask/DesignSystem/EmberStyle.swift`: the `EmberColor` gradient and three `ButtonStyle`s (`EmberRoundButtonStyle`, `EmberPillButtonStyle`, `EmberTextButtonStyle`) used everywhere instead of ad hoc modifiers, plus a `Color(hex:)` initializer.
+- **Previews as fixtures**: `TimerEngine` has `completedPreview()`/`runningPreview()` helpers used by SwiftUI `#Preview` blocks to exercise non-idle states without going through real timing/notifications — reuse this pattern rather than hand-rolling preview state.
+
+Note: `TimeOnTaskTests.swift` currently asserts a 25-minute default (`"25:00"`, `.minutes(25)`), but `TimerEngine.defaultDuration` is actually `.minutes(30)` with presets `[15, 30, 45, 60]` — these tests are out of sync with the source and will fail until one side is updated.
