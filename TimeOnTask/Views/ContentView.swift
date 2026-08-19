@@ -95,7 +95,13 @@ struct ContentView: View {
     }
 }
 
-#Preview {
+#Preview("Light") {
     ContentView()
         .environmentObject(TimerEngine())
+}
+
+#Preview("Dark") {
+    ContentView()
+        .environmentObject(TimerEngine())
+        .preferredColorScheme(.dark)
 }

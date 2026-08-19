@@ -130,6 +130,16 @@ final class TimerEngine: ObservableObject {
     }
 }
 
+extension TimerEngine {
+    // Preview helper that represents a session that has already finished, without triggering a real notification.
+    static func completedPreview() -> TimerEngine {
+        let engine = TimerEngine()
+        engine.phase = .complete
+        engine.remaining = 0
+        return engine
+    }
+}
+
 enum TimerPhase: Equatable {
     case idle
     case running

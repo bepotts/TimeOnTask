@@ -57,3 +57,51 @@ struct TimerDialView: View {
         .frame(width: diameter, height: diameter)
     }
 }
+
+#Preview("Idle") {
+    TimerDialView()
+        .environmentObject(TimerEngine())
+        .padding(40)
+}
+
+#Preview("Idle - Dark") {
+    TimerDialView()
+        .environmentObject(TimerEngine())
+        .padding(40)
+        .preferredColorScheme(.dark)
+}
+
+#Preview("Running") {
+    TimerDialView()
+        .environmentObject(TimerEngine.runningPreview())
+        .padding(40)
+}
+
+#Preview("Running - Dark") {
+    TimerDialView()
+        .environmentObject(TimerEngine.runningPreview())
+        .padding(40)
+        .preferredColorScheme(.dark)
+}
+
+#Preview("Complete") {
+    TimerDialView()
+        .environmentObject(TimerEngine.completedPreview())
+        .padding(40)
+}
+
+#Preview("Complete - Dark") {
+    TimerDialView()
+        .environmentObject(TimerEngine.completedPreview())
+        .padding(40)
+        .preferredColorScheme(.dark)
+}
+
+private extension TimerEngine {
+    // Helper that spins up a running engine for preview purposes.
+    static func runningPreview() -> TimerEngine {
+        let engine = TimerEngine()
+        engine.start()
+        return engine
+    }
+}

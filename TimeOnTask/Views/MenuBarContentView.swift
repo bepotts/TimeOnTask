@@ -104,3 +104,14 @@ struct MenuBarContentView: View {
         }
     }
 }
+
+#Preview("Light") {
+    MenuBarContentView()
+        .environmentObject(TimerEngine())
+}
+
+#Preview("Dark") {
+    MenuBarContentView()
+        .environmentObject(TimerEngine())
+        .preferredColorScheme(.dark)
+}
