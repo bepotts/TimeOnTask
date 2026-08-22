@@ -10,6 +10,7 @@ import SwiftUI
 struct ContentView: View {
     // Shared timer state that drives the main window display and actions.
     @EnvironmentObject var engine: TimerEngine
+    @FocusState private var focusedControl: FocusedControl?
 
     // Main timer window layout with session naming, dial, controls, and presets.
     var body: some View {
@@ -20,7 +21,9 @@ struct ContentView: View {
                 .foregroundStyle(.secondary)
                 .multilineTextAlignment(.center)
 
-            TimerDialView()
+            TimerDialView {
+                focusedControl = .playButton
+            }
 
             controls
 
@@ -43,6 +46,11 @@ struct ContentView: View {
                 Image(systemName: "play.fill")
             }
             .buttonStyle(EmberRoundButtonStyle(filled: true))
+            .focused($focusedControl, equals: .playButton)
+            .onKeyPress(.return) {
+                engine.start()
+                return .handled
+            }
 
         case .running:
             HStack(spacing: 18) {
@@ -67,6 +75,11 @@ struct ContentView: View {
                     Image(systemName: "play.fill")
                 }
                 .buttonStyle(EmberRoundButtonStyle(filled: true))
+                .focused($focusedControl, equals: .playButton)
+                .onKeyPress(.return) {
+                    engine.start()
+                    return .handled
+                }
 
                 Button("Stop") {
                     engine.stop()

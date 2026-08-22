@@ -60,6 +60,15 @@ final class TimerEngine: ObservableObject {
         totalDuration = seconds
     }
 
+    // Applies a user-entered duration from clicking the timer display, replacing the current duration/remaining time.
+    func setManualDuration(_ seconds: TimeInterval) {
+        guard phase == .idle || phase == .paused else { return }
+        let clamped = max(0, seconds)
+        duration = clamped
+        remaining = clamped
+        totalDuration = clamped
+    }
+
     func start() {
         guard phase == .idle || phase == .paused else { return }
         if phase == .idle {
