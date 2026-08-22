@@ -6,6 +6,10 @@
 import SwiftUI
 
 extension Color {
+    /// Creates a SwiftUI color from a six-character RGB hex string.
+    ///
+    /// - Parameters:
+    ///   - hex: The RGB hex value, with or without a leading number sign.
     init(hex: String) {
         // Hex string normalized so Scanner can read it with or without a leading #.
         var sanitized = hex.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -22,11 +26,11 @@ extension Color {
 }
 
 enum EmberColor {
-    // Warm starting color used for filled controls and gradients.
+    /// Warm starting color used for filled controls and gradients.
     static let accentStart = Color(hex: "F2A65A")
-    // Deeper ending color used to complete the ember gradient.
+    /// Deeper ending color used to complete the ember gradient.
     static let accentEnd = Color(hex: "C8672B")
-    // Shared gradient used for the timer ring and primary circular button.
+    /// Shared gradient used for the timer ring and primary circular button.
     static let gradient = LinearGradient(
         colors: [accentStart, accentEnd],
         startPoint: .topLeading,
@@ -35,9 +39,14 @@ enum EmberColor {
 }
 
 struct EmberRoundButtonStyle: ButtonStyle {
-    // Whether the circular button should use the filled accent treatment.
+    /// Whether the circular button should use the filled accent treatment.
     var filled: Bool
 
+    /// Builds the rounded button style body.
+    ///
+    /// - Parameters:
+    ///   - configuration: The current button style configuration supplied by SwiftUI.
+    /// - Returns: The styled button body.
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .font(.system(size: 14, weight: .semibold))
@@ -55,9 +64,14 @@ struct EmberRoundButtonStyle: ButtonStyle {
 }
 
 struct EmberPillButtonStyle: ButtonStyle {
-    // Whether the preset pill represents the currently selected duration.
+    /// Whether the preset pill represents the currently selected duration.
     var active: Bool
 
+    /// Builds the preset pill button style body.
+    ///
+    /// - Parameters:
+    ///   - configuration: The current button style configuration supplied by SwiftUI.
+    /// - Returns: The styled button body.
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .font(.system(size: 12, weight: active ? .semibold : .regular, design: .monospaced))
@@ -76,6 +90,11 @@ struct EmberPillButtonStyle: ButtonStyle {
 }
 
 struct EmberTextButtonStyle: ButtonStyle {
+    /// Builds the text button style body.
+    ///
+    /// - Parameters:
+    ///   - configuration: The current button style configuration supplied by SwiftUI.
+    /// - Returns: The styled button body.
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .font(.system(size: 12, weight: .medium))

@@ -7,11 +7,13 @@ import AppKit
 import UserNotifications
 
 final class NotificationManager {
-    // Singleton notification helper used by the timer engine.
+    /// Singleton notification helper used by the timer engine.
     static let shared = NotificationManager()
 
+    /// Creates the singleton notification manager.
     private init() {}
 
+    /// Requests user notification authorization if the system has not prompted yet.
     func requestAuthorizationIfNeeded() {
         // System notification center used to inspect and request alert permissions.
         let center = UNUserNotificationCenter.current()
@@ -21,6 +23,11 @@ final class NotificationManager {
         }
     }
 
+    /// Sends the completion notification and plays the completion sound.
+    ///
+    /// - Parameters:
+    ///   - label: The optional session label to include in the notification body.
+    ///   - minutes: The completed session length in whole minutes.
     func notifySessionComplete(label: String, minutes: Int) {
         // Notification payload shown when a timer session completes.
         let content = UNMutableNotificationContent()

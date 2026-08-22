@@ -1,0 +1,81 @@
+# ============================================
+# Xcode
+# ============================================
+
+# User-specific Xcode settings
+xcuserdata/
+*.xcuserdatad
+*.xcuserstate
+
+# Breakpoints
+*.xcbkptlist
+
+# Xcode build output
+build/
+DerivedData/
+
+# Xcode generated files
+*.xccheckout
+*.xcscmblueprint
+
+
+# ============================================
+# Swift Package Manager
+# ============================================
+
+.build/
+
+# Keep Package.resolved in version control for apps.
+# Uncomment for libraries if you intentionally don't
+# want to track dependency resolution.
+# Package.resolved
+
+
+# ============================================
+# CocoaPods
+# ============================================
+
+# Uncomment if you don't want Pods committed.
+# Pods/
+
+
+# ============================================
+# Carthage
+# ============================================
+
+Carthage/Build/
+
+
+# ============================================
+# fastlane
+# ============================================
+
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/screenshots/**/*.png
+fastlane/test_output/
+
+
+# ============================================
+# macOS
+# ============================================
+
+.DS_Store
+
+
+# ============================================
+# Environment / Secrets
+# ============================================
+
+.env
+.env.*
+!.env.example
+
+
+# ============================================
+# Temporary / Backup Files
+# ============================================
+
+*.tmp
+*.swp
+*~
