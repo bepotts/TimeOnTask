@@ -3,8 +3,10 @@
 //  TimeOnTask
 //
 
-import AppKit
 import UserNotifications
+#if os(macOS)
+import AppKit
+#endif
 
 final class NotificationManager {
     /// Singleton notification helper used by the timer engine.
@@ -39,6 +41,8 @@ final class NotificationManager {
         let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: nil)
         UNUserNotificationCenter.current().add(request)
 
+#if os(macOS)
         NSSound(named: "Glass")?.play()
+#endif
     }
 }

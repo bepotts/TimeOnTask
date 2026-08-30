@@ -4,7 +4,9 @@
 //
 
 import SwiftUI
+#if os(macOS)
 import AppKit
+#endif
 
 struct TimerDialView: View {
     /// Shared timer state used to render progress, time, and status text.
@@ -78,6 +80,7 @@ struct TimerDialView: View {
                         .onTapGesture { beginEditing() }
                         .accessibilityIdentifier("timerRemainingText")
                         .accessibilityLabel(engine.formattedRemaining)
+#if os(macOS)
                         .onHover { hovering in
                             guard isTimeEditable else { return }
                             if hovering {
@@ -86,6 +89,7 @@ struct TimerDialView: View {
                                 NSCursor.pop()
                             }
                         }
+#endif
                 }
                 Text(statusLabel)
                     .font(.system(size: 11))

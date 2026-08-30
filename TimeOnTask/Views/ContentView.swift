@@ -34,8 +34,14 @@ struct ContentView: View {
                 presetPills
             }
         }
+#if os(macOS)
         .padding(32)
         .frame(width: 360, height: 440)
+#else
+        .padding(.horizontal, 28)
+        .padding(.vertical, 36)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+#endif
         .onAppear {
             DispatchQueue.main.async {
                 focusedControl = .primaryButton
