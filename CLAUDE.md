@@ -44,3 +44,57 @@ There is no SPM `Package.swift` or separate lint config — this is a plain Xcod
 - **Previews as fixtures**: `TimerEngine` has `completedPreview()`/`runningPreview()` helpers used by SwiftUI `#Preview` blocks to exercise non-idle states without going through real timing/notifications — reuse this pattern rather than hand-rolling preview state.
 
 Note: `TimeOnTaskTests.swift` currently asserts a 25-minute default (`"25:00"`, `.minutes(25)`), but `TimerEngine.defaultDuration` is actually `.minutes(30)` with presets `[15, 30, 45, 60]` — these tests are out of sync with the source and will fail until one side is updated.
+
+## Implementation Notes
+
+- Preserve the shared-engine model between the main window and menu bar UI.
+- Keep views mostly declarative: read from `engine`, bind simple editable values, and call engine methods.
+- If adding timer states or controls, update both `ContentView` and `MenuBarContentView` unless the behavior is intentionally scene-specific.
+- Keep state mutations for `TimerEngine` on the main actor.
+- Keep variable declarations for UI elements at the bottom of the scope so the main view flow stays easy to scan.
+- Add comments for every declared variable and function, including UI properties and helper methods. Use Swift doc comments (`///`) for functions. Start each function docstring with a short summary sentence, then add a blank doc-comment line before any structured details. For functions with parameters, include a `- Parameters:` section with one indented bullet per parameter that explains its role. For functions that return a value, include a `- Returns:` section that describes what comes back. Omit sections that do not apply.
+- Avoid broad refactors unless they directly support the requested change.
+
+## Git Hygiene
+
+- The worktree may contain user edits. Do not revert changes you did not make.
+- Keep edits scoped to the requested task.
+- Avoid committing unless the user explicitly asks for a commit.
+
+## Swift Documentation Comments
+
+When documenting Swift functions, methods, and initializers, use Swift documentation comments (`///`) with Swift Markdown documentation syntax.
+
+Follow these formatting rules:
+
+- Begin with a concise summary sentence.
+- Add a blank documentation line (`///`) before documentation fields.
+- Group documentation under semantic fields such as `- Parameters:`, `- Returns:`, `- Throws:`, `- Precondition:`, and similar sections.
+- When a field contains multiple items, indent each item beneath its field.
+- Nested items must be visually tabbed/indented under the field they belong to.
+- Never place multiple parameter, return, or error descriptions at the same indentation level as the field heading.
+- Use consistent indentation of two spaces after `///` for nested documentation items.
+
+Example:
+
+```swift
+/// Calculates pricing information for an order.
+///
+/// - Parameters:
+///   - price: The price before tax.
+///   - taxRate: The tax rate as a decimal.
+///   - discountRate: The discount rate as a decimal.
+/// - Returns:
+///   - subtotal: The price after applying the discount.
+///   - total: The final price including tax.
+/// - Throws:
+///   - PricingError.invalidPrice: If the supplied price is negative.
+///   - PricingError.invalidTaxRate: If the tax rate is invalid.
+func calculateTotal(
+    price: Double,
+    taxRate: Double,
+    discountRate: Double
+) throws -> (subtotal: Double, total: Double) {
+    // ...
+}
+```

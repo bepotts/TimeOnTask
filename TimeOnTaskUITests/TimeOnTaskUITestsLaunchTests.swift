@@ -9,15 +9,17 @@ import XCTest
 
 final class TimeOnTaskUITestsLaunchTests: XCTestCase {
 
-    // Tells XCTest to run this launch screenshot test across configured UI appearances.
+    /// Tells XCTest to run this launch screenshot test across configured UI appearances.
     override class var runsForEachTargetApplicationUIConfiguration: Bool {
         true
     }
 
+    /// Prepares the launch test to stop immediately after a failure.
     override func setUpWithError() throws {
         continueAfterFailure = false
     }
 
+    /// Launches the app and stores a screenshot attachment for review.
     @MainActor
     func testLaunch() throws {
         // Application handle used to launch and screenshot the app under test.
