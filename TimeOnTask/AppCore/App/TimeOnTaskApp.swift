@@ -17,7 +17,8 @@ struct TimeOnTaskApp: App {
     var body: some Scene {
 #if os(macOS)
         WindowGroup {
-            mainTimerView
+            MacTimerView()
+                .environmentObject(engine)
         }
         .windowResizability(.contentSize)
         .defaultSize(width: 360, height: 440)
@@ -32,14 +33,9 @@ struct TimeOnTaskApp: App {
         .menuBarExtraStyle(.window)
 #else
         WindowGroup {
-            mainTimerView
+            IOSTimerView()
+                .environmentObject(engine)
         }
 #endif
-    }
-
-    /// Shared root view used by every platform-specific scene.
-    private var mainTimerView: some View {
-        ContentView()
-            .environmentObject(engine)
     }
 }

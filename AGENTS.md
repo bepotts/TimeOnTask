@@ -38,19 +38,22 @@ This is a plain Xcode project. There is no `Package.swift` and no separate lint 
 
 ## Architecture
 
-- `TimeOnTask/App/TimeOnTaskApp.swift` creates one `@StateObject` `TimerEngine` and injects it into both the `WindowGroup` and `MenuBarExtra` scenes with `.environmentObject`.
-- `TimeOnTask/Core/TimerEngine.swift` is the single source of truth for timer state and behavior. Keep timer logic out of views.
+- `TimeOnTask/AppCore/App/TimeOnTaskApp.swift` creates one `@StateObject` `TimerEngine` and injects it into platform-specific scenes with `.environmentObject`.
+- `TimeOnTask/AppCore/Core/TimerEngine.swift` is the single source of truth for timer state and behavior. Keep timer logic out of views.
+- `TimeOnTask/AppCore` contains code shared by the macOS and iPadOS/iOS app surfaces.
+- `TimeOnTask/Mac` contains macOS-specific views, including the main window and menu bar UI.
+- `TimeOnTask/iPadOS-iOS` contains iPhone and iPad-specific views.
 - `TimerPhase` follows `idle -> running <-> paused -> complete -> idle`.
 - Running timers use wall-clock time through `endDate`, while a repeating `Timer` only refreshes display state. Avoid replacing this with tick-counting logic.
-- `TimeOnTask/Services/NotificationManager.swift` owns notification and sound side effects.
-- `TimeOnTask/DesignSystem/EmberStyle.swift` centralizes colors and button styles. Prefer existing design-system types over ad hoc styling.
+- `TimeOnTask/AppCore/Services/NotificationManager.swift` owns notification and sound side effects.
+- `TimeOnTask/AppCore/DesignSystem/EmberStyle.swift` centralizes colors and button styles. Prefer existing design-system types over ad hoc styling.
 - SwiftUI previews should use `TimerEngine` preview helpers instead of creating view-owned timer state.
 
 ## Implementation Notes
 
-- Preserve the shared-engine model between the main window and menu bar UI.
+- Preserve the shared-engine model between platform-specific app views and the macOS menu bar UI.
 - Keep views mostly declarative: read from `engine`, bind simple editable values, and call engine methods.
-- If adding timer states or controls, update both `ContentView` and `MenuBarContentView` unless the behavior is intentionally scene-specific.
+- If adding timer states or controls, update `MacTimerView`, `IOSTimerView`, and `MenuBarContentView` unless the behavior is intentionally scene-specific.
 - Keep state mutations for `TimerEngine` on the main actor.
 - Keep variable declarations for UI elements at the bottom of the scope so the main view flow stays easy to scan.
 - Add comments for every declared variable, function, and enum, including UI properties, helper methods, enum types, and enum cases. Use Swift doc comments (`///`) for functions and enums. Start each function docstring with a short summary sentence, then add a blank doc-comment line before any structured details. For functions with parameters, include a `- Parameters:` section with one indented bullet per parameter that explains its role. For functions that return a value, include a `- Returns:` section that describes what comes back. Omit sections that do not apply.
