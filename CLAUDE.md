@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this is
 
-TimeOnTask ("Ember") is a native **macOS** app (SwiftUI, `SDKROOT = macosx`) — despite living under an `ios/` directory on disk, it is not an iOS project. It's a menu-bar focus timer: a main window plus a `MenuBarExtra` popover, both driven by one shared timer engine.
+TimeOnTask ("Ember") is a native SwiftUI focus timer for macOS, iPadOS, and iOS. The macOS app has a main window plus a `MenuBarExtra` popover, while the iPadOS and iOS app has a single timer view. All surfaces are driven by one shared timer engine.
 
 ## Commands
 
@@ -37,6 +37,7 @@ There is no SPM `Package.swift` or separate lint config — this is a plain Xcod
 **Single source of truth:** `TimerEngine` (`TimeOnTask/AppCore/Core/TimerEngine.swift`) is the one `@MainActor` `ObservableObject` created in `TimeOnTaskApp` and injected via `.environmentObject` into platform-specific scenes. There is no per-view state duplication: the macOS main window, macOS menu bar popover, and iPadOS/iOS app screen are renderings of the same engine.
 
 - **Source layout**: `TimeOnTask/AppCore` contains shared app, engine, service, design-system, and reusable view code. `TimeOnTask/Mac` contains macOS-specific views. `TimeOnTask/iPadOS-iOS` contains iPhone and iPad-specific views.
+- **UI test layout**: `TimeOnTaskUITests/AppCore` contains shared UI test helpers. `TimeOnTaskUITests/Mac` contains macOS-specific UI tests. `TimeOnTaskUITests/iPadOS-iOS` contains iPhone and iPad-specific UI tests.
 - **Phase state machine**: `TimerPhase` is `.idle → .running ⇄ .paused → .complete → .idle`. All views branch on `engine.phase` to decide which controls to show (see the `controls` computed views in `MacTimerView`, `IOSTimerView`, and `MenuBarContentView`, which are structurally duplicated between the app surfaces).
 - **Wall-clock timing, not tick-counting**: running state is tracked via an `endDate` (`Date`), and a 0.25s repeating `Timer` just recomputes `remaining = endDate.timeIntervalSinceNow`. This means pause/resume and elapsed time stay correct across sleep/backgrounding without drift accumulation from tick counting.
 - **Views are dumb**: `TimerDialView` (the circular progress ring), `MacTimerView`, `IOSTimerView`, and `MenuBarContentView`/`MenuBarLabel` only read `engine` and call its methods (`start`, `pause`, `stop`, `selectPreset`, `startAnother`); no view owns timer logic itself.
