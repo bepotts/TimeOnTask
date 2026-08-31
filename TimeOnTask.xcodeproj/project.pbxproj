@@ -8,6 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		29E71A77303FAD9B00E428D3 /* .gitignore in Resources */ = {isa = PBXBuildFile; fileRef = 29E71A76303FAD9B00E428D3 /* .gitignore */; };
+		29E71C2A3045B11C00E428D3 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 29E71C293045B11C00E428D3 /* README.md */; };
+		29E71C2B3045B11C00E428D3 /* AGENTS.md in Resources */ = {isa = PBXBuildFile; fileRef = 29E71C273045B11C00E428D3 /* AGENTS.md */; };
+		29E71C2C3045B11C00E428D3 /* CLAUDE.md in Resources */ = {isa = PBXBuildFile; fileRef = 29E71C283045B11C00E428D3 /* CLAUDE.md */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -32,6 +35,9 @@
 		29240CA430324ECA001BDBCE /* TimeOnTaskTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TimeOnTaskTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		29240CAE30324ECA001BDBCE /* TimeOnTaskUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TimeOnTaskUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		29E71A76303FAD9B00E428D3 /* .gitignore */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
+		29E71C273045B11C00E428D3 /* AGENTS.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = AGENTS.md; sourceTree = "<group>"; };
+		29E71C283045B11C00E428D3 /* CLAUDE.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = CLAUDE.md; sourceTree = "<group>"; };
+		29E71C293045B11C00E428D3 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -80,6 +86,9 @@
 		29240C8C30324EC8001BDBCE = {
 			isa = PBXGroup;
 			children = (
+				29E71C273045B11C00E428D3 /* AGENTS.md */,
+				29E71C283045B11C00E428D3 /* CLAUDE.md */,
+				29E71C293045B11C00E428D3 /* README.md */,
 				29240C9730324EC8001BDBCE /* TimeOnTask */,
 				29240CA730324ECA001BDBCE /* TimeOnTaskTests */,
 				29240CB130324ECA001BDBCE /* TimeOnTaskUITests */,
@@ -218,6 +227,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				29E71C2A3045B11C00E428D3 /* README.md in Resources */,
+				29E71C2B3045B11C00E428D3 /* AGENTS.md in Resources */,
+				29E71C2C3045B11C00E428D3 /* CLAUDE.md in Resources */,
 				29E71A77303FAD9B00E428D3 /* .gitignore in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
