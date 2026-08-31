@@ -210,6 +210,10 @@
 			);
 			mainGroup = 29240C8C30324EC8001BDBCE;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				29E71C8D3046461500E428D3 /* XCRemoteSwiftPackageReference "SwiftLintPlugins" */,
+				29E71C8E3046462F00E428D3 /* XCRemoteSwiftPackageReference "SwiftFormat" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 29240C9630324EC8001BDBCE /* Products */;
 			projectDirPath = "";
@@ -634,6 +638,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		29E71C8D3046461500E428D3 /* XCRemoteSwiftPackageReference "SwiftLintPlugins" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/SimplyDanny/SwiftLintPlugins";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.65.1;
+			};
+		};
+		29E71C8E3046462F00E428D3 /* XCRemoteSwiftPackageReference "SwiftFormat" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/nicklockwood/SwiftFormat";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.63.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
 	};
 	rootObject = 29240C8D30324EC8001BDBCE /* Project object */;
 }
