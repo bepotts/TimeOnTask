@@ -1,5 +1,5 @@
 //
-//  ContentView.swift
+//  IOSTimerView.swift
 //  TimeOnTask
 //
 //  Created by Brandon Potts on 8/16/26.
@@ -7,13 +7,14 @@
 
 import SwiftUI
 
-struct ContentView: View {
-    /// Shared timer state that drives the main window display and actions.
+#if os(iOS)
+struct IOSTimerView: View {
+    /// Shared timer state that drives the iOS timer display and actions.
     @EnvironmentObject var engine: TimerEngine
     /// Focus target used to return keyboard focus to the primary control after editing.
     @FocusState private var focusedControl: FocusedControl?
 
-    /// Main timer window layout with session naming, dial, controls, and presets.
+    /// Main iPhone and iPad timer layout with session naming, dial, controls, and presets.
     var body: some View {
         VStack(spacing: 22) {
             TextField("Name this session", text: $engine.sessionLabel)
@@ -34,8 +35,9 @@ struct ContentView: View {
                 presetPills
             }
         }
-        .padding(32)
-        .frame(width: 360, height: 440)
+        .padding(.horizontal, 28)
+        .padding(.vertical, 36)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
         .onAppear {
             DispatchQueue.main.async {
                 focusedControl = .primaryButton
@@ -177,12 +179,13 @@ struct ContentView: View {
 }
 
 #Preview("Light") {
-    ContentView()
+    IOSTimerView()
         .environmentObject(TimerEngine())
 }
 
 #Preview("Dark") {
-    ContentView()
+    IOSTimerView()
         .environmentObject(TimerEngine())
         .preferredColorScheme(.dark)
 }
+#endif

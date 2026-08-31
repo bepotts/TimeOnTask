@@ -1,34 +1,31 @@
 //
-//  TimeOnTaskUITests.swift
+//  MacTimeOnTaskUITests.swift
 //  TimeOnTaskUITests
-//
-//  Created by Brandon Potts on 8/16/26.
 //
 
 import XCTest
 
-final class TimeOnTaskUITests: XCTestCase {
-    /// Application under test for the current UI test.
+#if os(macOS)
+final class MacTimeOnTaskUITests: XCTestCase {
+    /// Application under test for the current macOS UI test.
     private var app: XCUIApplication!
 
-    /// Prepares each UI test to stop immediately after a failure.
+    /// Prepares each macOS UI test to stop immediately after a failure.
     override func setUpWithError() throws {
-        // In UI tests it is usually best to stop immediately when a failure occurs.
         continueAfterFailure = false
-        app = XCUIApplication()
-        app.launch()
+        app = UITestApp.launch()
     }
 
-    /// Cleans up after each UI test.
+    /// Cleans up after each macOS UI test.
     override func tearDownWithError() throws {
         app = nil
     }
 
-    /// Verifies the default timer UI launches with expected controls.
+    /// Verifies the default macOS timer UI launches with expected controls.
     @MainActor
     func testDefaultTimerStateShowsReadyThirtyMinutesAndPresets() throws {
         XCTAssertTrue(app.textFields["sessionLabelField"].waitForExistence(timeout: 2))
-        XCTAssertTrue(waitForTimerText("30:00"))
+        XCTAssertTrue(UITestApp.waitForTimerText("30:00", in: app))
         XCTAssertTrue(app.staticTexts["timerStatusText"].exists)
         XCTAssertTrue(app.buttons["startTimerButton"].exists)
         XCTAssertTrue(app.buttons["preset15Button"].exists)
@@ -37,17 +34,17 @@ final class TimeOnTaskUITests: XCTestCase {
         XCTAssertTrue(app.buttons["preset60Button"].exists)
     }
 
-    /// Verifies preset buttons update the visible countdown while idle.
+    /// Verifies macOS preset buttons update the visible countdown while idle.
     @MainActor
     func testPresetSelectionUpdatesVisibleCountdown() throws {
         app.buttons["preset15Button"].click()
-        XCTAssertTrue(waitForTimerText("15:00"))
+        XCTAssertTrue(UITestApp.waitForTimerText("15:00", in: app))
 
         app.buttons["preset60Button"].click()
-        XCTAssertTrue(waitForTimerText("60:00"))
+        XCTAssertTrue(UITestApp.waitForTimerText("60:00", in: app))
     }
 
-    /// Verifies the main start, pause, resume, and stop controls move through the expected UI states.
+    /// Verifies the macOS start, pause, resume, and stop controls move through the expected UI states.
     @MainActor
     func testStartPauseResumeAndStopFlow() throws {
         app.buttons["preset15Button"].click()
@@ -65,12 +62,12 @@ final class TimeOnTaskUITests: XCTestCase {
         XCTAssertTrue(app.buttons["pauseTimerButton"].waitForExistence(timeout: 2))
 
         app.buttons["stopTimerButton"].click()
-        XCTAssertTrue(waitForTimerText("15:00"))
+        XCTAssertTrue(UITestApp.waitForTimerText("15:00", in: app))
         XCTAssertTrue(app.buttons["startTimerButton"].exists)
         XCTAssertTrue(app.textFields["sessionLabelField"].isEnabled)
     }
 
-    /// Verifies the session label can be edited before the timer starts.
+    /// Verifies the macOS session label can be edited before the timer starts.
     @MainActor
     func testSessionLabelCanBeEditedWhileIdle() throws {
         // Session label field shown at the top of the main timer window.
@@ -85,25 +82,12 @@ final class TimeOnTaskUITests: XCTestCase {
         XCTAssertEqual(field.value as? String, "Deep Work")
     }
 
-    /// Measures the app launch performance using XCTest's launch metric.
+    /// Measures the macOS app launch performance using XCTest's launch metric.
     @MainActor
     func testLaunchPerformance() throws {
-        // This measures how long it takes to launch your application.
         measure(metrics: [XCTApplicationLaunchMetric()]) {
             XCUIApplication().launch()
         }
     }
-
-    /// Waits until the visible timer text matches an expected value.
-    ///
-    /// - Parameters:
-    ///   - text: The expected formatted countdown text.
-    /// - Returns: Whether the timer text matched before the timeout.
-    private func waitForTimerText(_ text: String) -> Bool {
-        // Identified timer text used when SwiftUI exposes the element with its test identifier.
-        let identifiedTimerText = app.staticTexts["timerRemainingText"]
-        // Visible timer text used as a fallback when macOS exposes the display by label instead.
-        let visibleTimerText = app.staticTexts[text]
-        return identifiedTimerText.label == text || visibleTimerText.waitForExistence(timeout: 2)
-    }
 }
+#endif

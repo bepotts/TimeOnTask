@@ -6,6 +6,7 @@
 import OSLog
 import SwiftUI
 
+#if os(macOS)
 struct MenuBarLabel: View {
     /// Shared timer state used to decide whether the menu bar should show a countdown.
     @EnvironmentObject var engine: TimerEngine
@@ -194,3 +195,4 @@ struct MenuBarContentView: View {
         .environmentObject(TimerEngine())
         .preferredColorScheme(.dark)
 }
+#endif

@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this is
 
-TimeOnTask ("Ember") is a native **macOS** app (SwiftUI, `SDKROOT = macosx`) — despite living under an `ios/` directory on disk, it is not an iOS project. It's a menu-bar focus timer: a main window plus a `MenuBarExtra` popover, both driven by one shared timer engine.
+TimeOnTask ("Ember") is a native SwiftUI focus timer for macOS, iPadOS, and iOS. The macOS app has a main window plus a `MenuBarExtra` popover, while the iPadOS and iOS app has a single timer view. All surfaces are driven by one shared timer engine.
 
 ## Commands
 
@@ -34,22 +34,24 @@ There is no SPM `Package.swift` or separate lint config — this is a plain Xcod
 
 ## Architecture
 
-**Single source of truth:** `TimerEngine` (`TimeOnTask/Core/TimerEngine.swift`) is the one `@MainActor` `ObservableObject` created in `TimeOnTaskApp` and injected via `.environmentObject` into *both* scenes (`WindowGroup` and `MenuBarExtra`). There is no per-view state duplication — the main window and the menu bar popover are just two renderings of the same engine.
+**Single source of truth:** `TimerEngine` (`TimeOnTask/AppCore/Core/TimerEngine.swift`) is the one `@MainActor` `ObservableObject` created in `TimeOnTaskApp` and injected via `.environmentObject` into platform-specific scenes. There is no per-view state duplication: the macOS main window, macOS menu bar popover, and iPadOS/iOS app screen are renderings of the same engine.
 
-- **Phase state machine**: `TimerPhase` is `.idle → .running ⇄ .paused → .complete → .idle`. All views branch on `engine.phase` to decide which controls to show (see the `controls` computed views in `ContentView` and `MenuBarContentView`, which are structurally duplicated between the two).
+- **Source layout**: `TimeOnTask/AppCore` contains shared app, engine, service, design-system, and reusable view code. `TimeOnTask/Mac` contains macOS-specific views. `TimeOnTask/iPadOS-iOS` contains iPhone and iPad-specific views.
+- **UI test layout**: `TimeOnTaskUITests/AppCore` contains shared UI test helpers. `TimeOnTaskUITests/Mac` contains macOS-specific UI tests. `TimeOnTaskUITests/iPadOS-iOS` contains iPhone and iPad-specific UI tests.
+- **Phase state machine**: `TimerPhase` is `.idle → .running ⇄ .paused → .complete → .idle`. All views branch on `engine.phase` to decide which controls to show (see the `controls` computed views in `MacTimerView`, `IOSTimerView`, and `MenuBarContentView`, which are structurally duplicated between the app surfaces).
 - **Wall-clock timing, not tick-counting**: running state is tracked via an `endDate` (`Date`), and a 0.25s repeating `Timer` just recomputes `remaining = endDate.timeIntervalSinceNow`. This means pause/resume and elapsed time stay correct across sleep/backgrounding without drift accumulation from tick counting.
-- **Views are dumb**: `TimerDialView` (the circular progress ring), `ContentView` (main window), and `MenuBarContentView`/`MenuBarLabel` (menu bar) only read `engine` and call its methods (`start`, `pause`, `stop`, `selectPreset`, `startAnother`); no view owns timer logic itself.
-- **Side effects live in `NotificationManager`** (`TimeOnTask/Services/NotificationManager.swift`), a plain singleton (not an `ObservableObject`) that `TimerEngine.complete()` calls directly to fire a `UNUserNotificationCenter` alert and play a system sound.
-- **Styling is centralized** in `TimeOnTask/DesignSystem/EmberStyle.swift`: the `EmberColor` gradient and three `ButtonStyle`s (`EmberRoundButtonStyle`, `EmberPillButtonStyle`, `EmberTextButtonStyle`) used everywhere instead of ad hoc modifiers, plus a `Color(hex:)` initializer.
+- **Views are dumb**: `TimerDialView` (the circular progress ring), `MacTimerView`, `IOSTimerView`, and `MenuBarContentView`/`MenuBarLabel` only read `engine` and call its methods (`start`, `pause`, `stop`, `selectPreset`, `startAnother`); no view owns timer logic itself.
+- **Side effects live in `NotificationManager`** (`TimeOnTask/AppCore/Services/NotificationManager.swift`), a plain singleton (not an `ObservableObject`) that `TimerEngine.complete()` calls directly to fire a `UNUserNotificationCenter` alert and play a system sound where supported.
+- **Styling is centralized** in `TimeOnTask/AppCore/DesignSystem/EmberStyle.swift`: the `EmberColor` gradient and three `ButtonStyle`s (`EmberRoundButtonStyle`, `EmberPillButtonStyle`, `EmberTextButtonStyle`) used everywhere instead of ad hoc modifiers, plus a `Color(hex:)` initializer.
 - **Previews as fixtures**: `TimerEngine` has `completedPreview()`/`runningPreview()` helpers used by SwiftUI `#Preview` blocks to exercise non-idle states without going through real timing/notifications — reuse this pattern rather than hand-rolling preview state.
 
-Note: `TimeOnTaskTests.swift` currently asserts a 25-minute default (`"25:00"`, `.minutes(25)`), but `TimerEngine.defaultDuration` is actually `.minutes(30)` with presets `[15, 30, 45, 60]` — these tests are out of sync with the source and will fail until one side is updated.
+Note: `TimeOnTaskTests.swift` currently expects `TimerEngine.defaultDuration` to be `.minutes(30)` with presets `[15, 30, 45, 60]`.
 
 ## Implementation Notes
 
-- Preserve the shared-engine model between the main window and menu bar UI.
+- Preserve the shared-engine model between platform-specific app views and the macOS menu bar UI.
 - Keep views mostly declarative: read from `engine`, bind simple editable values, and call engine methods.
-- If adding timer states or controls, update both `ContentView` and `MenuBarContentView` unless the behavior is intentionally scene-specific.
+- If adding timer states or controls, update `MacTimerView`, `IOSTimerView`, and `MenuBarContentView` unless the behavior is intentionally scene-specific.
 - Keep state mutations for `TimerEngine` on the main actor.
 - Keep variable declarations for UI elements at the bottom of the scope so the main view flow stays easy to scan.
 - Add comments for every declared variable and function, including UI properties and helper methods. Use Swift doc comments (`///`) for functions. Start each function docstring with a short summary sentence, then add a blank doc-comment line before any structured details. For functions with parameters, include a `- Parameters:` section with one indented bullet per parameter that explains its role. For functions that return a value, include a `- Returns:` section that describes what comes back. Omit sections that do not apply.

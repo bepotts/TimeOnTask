@@ -13,10 +13,11 @@ struct TimeOnTaskApp: App {
     /// Shared timer state that is injected into both the main window and menu bar UI.
     @StateObject private var engine = TimerEngine()
 
-    /// Defines the app's visible scenes: the main window and the menu bar extra.
+    /// Defines the app's visible scenes for each supported platform.
     var body: some Scene {
+#if os(macOS)
         WindowGroup {
-            ContentView()
+            MacTimerView()
                 .environmentObject(engine)
         }
         .windowResizability(.contentSize)
@@ -30,5 +31,11 @@ struct TimeOnTaskApp: App {
                 .environmentObject(engine)
         }
         .menuBarExtraStyle(.window)
+#else
+        WindowGroup {
+            IOSTimerView()
+                .environmentObject(engine)
+        }
+#endif
     }
 }
