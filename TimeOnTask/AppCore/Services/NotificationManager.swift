@@ -8,6 +8,7 @@ import UserNotifications
 import AppKit
 #endif
 
+@MainActor
 final class NotificationManager {
     /// Singleton notification helper used by the timer engine.
     static let shared = NotificationManager()
@@ -17,11 +18,12 @@ final class NotificationManager {
 
     /// Requests user notification authorization if the system has not prompted yet.
     func requestAuthorizationIfNeeded() {
-        // System notification center used to inspect and request alert permissions.
-        let center = UNUserNotificationCenter.current()
-        center.getNotificationSettings { settings in
+        Task {
+            // System notification center used to inspect and request alert permissions.
+            let center = UNUserNotificationCenter.current()
+            let settings = await center.notificationSettings()
             guard settings.authorizationStatus == .notDetermined else { return }
-            center.requestAuthorization(options: [.alert, .sound]) { _, _ in }
+            _ = try? await center.requestAuthorization(options: [.alert, .sound])
         }
     }
 
@@ -34,12 +36,14 @@ final class NotificationManager {
         // Notification payload shown when a timer session completes.
         let content = UNMutableNotificationContent()
         content.title = "Session complete"
-        content.body = label.isEmpty ? "\(minutes) minutes done." : "\(label) — \(minutes) minutes done."
+        content.body = label.isEmpty ? "\(minutes) minutes done." : "\(label) - \(minutes) minutes done."
         content.sound = .default
 
         // One-off notification request delivered immediately.
         let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: nil)
-        UNUserNotificationCenter.current().add(request)
+        Task {
+            try? await UNUserNotificationCenter.current().add(request)
+        }
 
 #if os(macOS)
         NSSound(named: "Glass")?.play()

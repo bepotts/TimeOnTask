@@ -13,7 +13,7 @@ extension Color {
     init(hex: String) {
         // Hex string normalized so Scanner can read it with or without a leading #.
         var sanitized = hex.trimmingCharacters(in: .whitespacesAndNewlines)
-        sanitized = sanitized.replacingOccurrences(of: "#", with: "")
+        sanitized = sanitized.replacing("#", with: "")
         // Numeric RGB value parsed from the normalized hex string.
         var rgb: UInt64 = 0
         Scanner(string: sanitized).scanHexInt64(&rgb)

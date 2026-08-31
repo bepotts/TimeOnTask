@@ -10,12 +10,14 @@ import SwiftUI
 #if os(macOS)
 struct MacTimerView: View {
     /// Shared timer state that drives the main window display and actions.
-    @EnvironmentObject var engine: TimerEngine
+    @Environment(TimerEngine.self) private var engine
     /// Focus target used to return keyboard focus to the primary control after editing.
     @FocusState private var focusedControl: FocusedControl?
 
     /// Main timer window layout with session naming, dial, controls, and presets.
     var body: some View {
+        @Bindable var engine = engine
+
         VStack(spacing: 22) {
             TextField("Name this session", text: $engine.sessionLabel)
                 .textFieldStyle(.plain)
@@ -38,13 +40,13 @@ struct MacTimerView: View {
         .padding(32)
         .frame(width: 360, height: 440)
         .onAppear {
-            DispatchQueue.main.async {
+            Task { @MainActor in
                 focusedControl = .primaryButton
             }
         }
         .onChange(of: engine.phase) { _, phase in
             guard phase == .complete else { return }
-            DispatchQueue.main.async {
+            Task { @MainActor in
                 focusedControl = .primaryButton
             }
         }
@@ -55,12 +57,11 @@ struct MacTimerView: View {
     private var controls: some View {
         switch engine.phase {
         case .idle:
-            Button {
+            Button("Start timer", systemImage: "play.fill") {
                 engine.start()
                 focusedControl = .primaryButton
-            } label: {
-                Image(systemName: "play.fill")
             }
+            .labelStyle(.iconOnly)
             .buttonStyle(EmberRoundButtonStyle(filled: true))
             .focused($focusedControl, equals: .primaryButton)
             .accessibilityIdentifier("startTimerButton")
@@ -71,11 +72,10 @@ struct MacTimerView: View {
 
         case .running:
             HStack(spacing: 18) {
-                Button {
+                Button("Pause timer", systemImage: "pause.fill") {
                     engine.pause()
-                } label: {
-                    Image(systemName: "pause.fill")
                 }
+                .labelStyle(.iconOnly)
                 .buttonStyle(EmberRoundButtonStyle(filled: false))
                 .focused($focusedControl, equals: .primaryButton)
                 .accessibilityIdentifier("pauseTimerButton")
@@ -99,12 +99,11 @@ struct MacTimerView: View {
 
         case .paused:
             HStack(spacing: 18) {
-                Button {
+                Button("Start timer", systemImage: "play.fill") {
                     engine.start()
                     focusedControl = .primaryButton
-                } label: {
-                    Image(systemName: "play.fill")
                 }
+                .labelStyle(.iconOnly)
                 .buttonStyle(EmberRoundButtonStyle(filled: true))
                 .focused($focusedControl, equals: .primaryButton)
                 .accessibilityIdentifier("startTimerButton")
@@ -168,9 +167,9 @@ struct MacTimerView: View {
     ///   - action: The button action to run on the next main-loop pass.
     ///   - control: The focus target that should remain active after the action completes.
     private func performFocusedAction(_ action: @escaping () -> Void, refocusing control: FocusedControl) {
-        DispatchQueue.main.async {
+        Task { @MainActor in
             action()
-            DispatchQueue.main.async {
+            Task { @MainActor in
                 focusedControl = control
             }
         }
@@ -179,12 +178,12 @@ struct MacTimerView: View {
 
 #Preview("Light") {
     MacTimerView()
-        .environmentObject(TimerEngine())
+        .environment(TimerEngine())
 }
 
 #Preview("Dark") {
     MacTimerView()
-        .environmentObject(TimerEngine())
+        .environment(TimerEngine())
         .preferredColorScheme(.dark)
 }
 #endif

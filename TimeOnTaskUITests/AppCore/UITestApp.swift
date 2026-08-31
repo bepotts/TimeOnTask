@@ -12,7 +12,9 @@ enum UITestApp {
     static func launch() -> XCUIApplication {
         // Application handle that XCTest binds to the configured test target.
         let app = XCUIApplication()
+        app.launchArguments.append(contentsOf: ["-ApplePersistenceIgnoreState", "YES"])
         app.launch()
+        app.activate()
         return app
     }
 
@@ -25,8 +27,12 @@ enum UITestApp {
     static func waitForTimerText(_ text: String, in app: XCUIApplication) -> Bool {
         // Identified timer text used when SwiftUI exposes the element with its test identifier.
         let identifiedTimerText = app.staticTexts["timerRemainingText"]
+        // Identified timer button used when the editable countdown is exposed as an accessible button.
+        let identifiedTimerButton = app.buttons["timerRemainingText"]
         // Visible timer text used as a fallback when the platform exposes the display by label instead.
         let visibleTimerText = app.staticTexts[text]
-        return identifiedTimerText.label == text || visibleTimerText.waitForExistence(timeout: 2)
+        return (identifiedTimerText.exists && identifiedTimerText.label == text)
+            || (identifiedTimerButton.exists && identifiedTimerButton.label == text)
+            || visibleTimerText.waitForExistence(timeout: 2)
     }
 }

@@ -10,7 +10,7 @@ import AppKit
 
 struct TimerDialView: View {
     /// Shared timer state used to render progress, time, and status text.
-    @EnvironmentObject var engine: TimerEngine
+    @Environment(TimerEngine.self) private var engine
     /// Diameter of the circular timer dial so the same view can fit window and menu bar layouts.
     var diameter: CGFloat = 220
     /// Font size for the central time display.
@@ -73,22 +73,26 @@ struct TimerDialView: View {
                         if focused == nil { commitEdit() }
                     }
                 } else {
-                    Text(engine.formattedRemaining)
-                        .font(.system(size: timeFontSize, weight: .medium, design: .monospaced))
-                        .monospacedDigit()
-                        .contentShape(Rectangle())
-                        .onTapGesture { beginEditing() }
-                        .accessibilityIdentifier("timerRemainingText")
-                        .accessibilityLabel(engine.formattedRemaining)
+                    Button {
+                        beginEditing()
+                    } label: {
+                        Text(engine.formattedRemaining)
+                            .font(.system(size: timeFontSize, weight: .medium, design: .monospaced))
+                            .monospacedDigit()
+                    }
+                    .buttonStyle(.plain)
+                    .contentShape(Rectangle())
+                    .accessibilityIdentifier("timerRemainingText")
+                    .accessibilityLabel(engine.formattedRemaining)
 #if os(macOS)
-                        .onHover { hovering in
-                            guard isTimeEditable else { return }
-                            if hovering {
-                                NSCursor.pointingHand.push()
-                            } else {
-                                NSCursor.pop()
-                            }
+                    .onHover { hovering in
+                        guard isTimeEditable else { return }
+                        if hovering {
+                            NSCursor.pointingHand.push()
+                        } else {
+                            NSCursor.pop()
                         }
+                    }
 #endif
                 }
                 Text(statusLabel)
@@ -127,7 +131,6 @@ struct TimerDialView: View {
             .contentShape(Rectangle())
             .focused($focusedDigitIndex, equals: index)
             .accessibilityIdentifier("timerDigit\(index)Field")
-            .onTapGesture { focusedDigitIndex = index }
             .onSubmit { advanceFocus(from: index) }
             .onKeyPress { press in
                 guard let typed = press.characters.last else {
@@ -196,13 +199,13 @@ struct TimerDialView: View {
     private func advanceFocus(from index: Int) {
         guard index < digits.count - 1 else {
             commitEdit()
-            DispatchQueue.main.async {
+            Task { @MainActor in
                 onCompletedDigitEntry()
             }
             return
         }
         let nextIndex = index + 1
-        DispatchQueue.main.async {
+        Task { @MainActor in
             focusedDigitIndex = nextIndex
         }
     }
@@ -241,7 +244,7 @@ struct TimerDialView: View {
         isEditingTime = false
         focusedDigitIndex = nil
         // Defer the published engine update until SwiftUI finishes the current focus/view update pass.
-        DispatchQueue.main.async {
+        Task { @MainActor in
             engine.setManualDuration(duration)
         }
     }
@@ -249,39 +252,39 @@ struct TimerDialView: View {
 
 #Preview("Idle") {
     TimerDialView()
-        .environmentObject(TimerEngine())
+        .environment(TimerEngine())
         .padding(40)
 }
 
 #Preview("Idle - Dark") {
     TimerDialView()
-        .environmentObject(TimerEngine())
+        .environment(TimerEngine())
         .padding(40)
         .preferredColorScheme(.dark)
 }
 
 #Preview("Running") {
     TimerDialView()
-        .environmentObject(TimerEngine.runningPreview())
+        .environment(TimerEngine.runningPreview())
         .padding(40)
 }
 
 #Preview("Running - Dark") {
     TimerDialView()
-        .environmentObject(TimerEngine.runningPreview())
+        .environment(TimerEngine.runningPreview())
         .padding(40)
         .preferredColorScheme(.dark)
 }
 
 #Preview("Complete") {
     TimerDialView()
-        .environmentObject(TimerEngine.completedPreview())
+        .environment(TimerEngine.completedPreview())
         .padding(40)
 }
 
 #Preview("Complete - Dark") {
     TimerDialView()
-        .environmentObject(TimerEngine.completedPreview())
+        .environment(TimerEngine.completedPreview())
         .padding(40)
         .preferredColorScheme(.dark)
 }

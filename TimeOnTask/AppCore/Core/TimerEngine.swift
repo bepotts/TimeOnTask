@@ -4,11 +4,12 @@
 //
 
 import Foundation
-import Combine
+import Observation
 import OSLog
 
 @MainActor
-final class TimerEngine: ObservableObject {
+@Observable
+final class TimerEngine {
     /// Default session length used when a timer engine is created without a custom duration.
     nonisolated static let defaultDuration: TimeInterval = .minutes(30)
     /// Largest session length the timer accepts from manual entry or presets.
@@ -59,21 +60,25 @@ final class TimerEngine: ObservableObject {
     ]
 
     /// Current lifecycle state that drives the visible controls and timer behavior.
-    @Published private(set) var phase: TimerPhase = .idle
+    private(set) var phase: TimerPhase = .idle
     /// Amount of time left in the current or selected session.
-    @Published private(set) var remaining: TimeInterval
+    private(set) var remaining: TimeInterval
     /// Selected session length that idle timers start from.
-    @Published var duration: TimeInterval
+    var duration: TimeInterval
     /// Optional user-entered label used when naming and announcing the completed session.
-    @Published var sessionLabel: String
+    var sessionLabel: String
 
     /// Session length captured at start time so progress remains stable during a run.
+    @ObservationIgnored
     private var totalDuration: TimeInterval
     /// Wall-clock finish time used to calculate remaining time accurately.
+    @ObservationIgnored
     private var endDate: Date?
     /// Repeating timer that refreshes the engine while a session is running.
+    @ObservationIgnored
     private var timer: Timer?
     /// Logger used to record timer engine lifecycle events.
+    @ObservationIgnored
     private let logger = Logger.services
 
     /// Creates a timer engine with a selected duration.
@@ -102,7 +107,9 @@ final class TimerEngine: ObservableObject {
     /// Remaining time formatted for display in the timer views.
     var formattedRemaining: String {
         let components = TimerEngine.displayComponents(for: remaining)
-        return String(format: "%02d:%02d", components.minutes, components.seconds)
+        let minutes = components.minutes.formatted(.number.precision(.integerLength(2)))
+        let seconds = components.seconds.formatted(.number.precision(.integerLength(2)))
+        return "\(minutes):\(seconds)"
     }
 
     /// Remaining time split into the editable display's minute and second fields.

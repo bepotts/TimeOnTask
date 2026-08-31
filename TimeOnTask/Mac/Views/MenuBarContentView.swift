@@ -9,7 +9,7 @@ import SwiftUI
 #if os(macOS)
 struct MenuBarLabel: View {
     /// Shared timer state used to decide whether the menu bar should show a countdown.
-    @EnvironmentObject var engine: TimerEngine
+    @Environment(TimerEngine.self) private var engine
 
     /// Compact menu bar label with the flame icon and optional remaining time.
     var body: some View {
@@ -26,7 +26,7 @@ struct MenuBarLabel: View {
 
 struct MenuBarContentView: View {
     /// Shared timer state that powers the menu bar controls and dial.
-    @EnvironmentObject var engine: TimerEngine
+    @Environment(TimerEngine.self) private var engine
     /// Focus target used to return keyboard focus to the active primary control.
     @FocusState private var focusedControl: FocusedControl?
     /// Logger used to record menu bar view lifecycle and interaction events.
@@ -76,13 +76,13 @@ struct MenuBarContentView: View {
         .padding(18)
         .frame(width: 220)
         .onAppear {
-            DispatchQueue.main.async {
+            Task { @MainActor in
                 focusedControl = .primaryButton
             }
         }
         .onChange(of: engine.phase) { _, phase in
             guard phase == .complete else { return }
-            DispatchQueue.main.async {
+            Task { @MainActor in
                 focusedControl = .primaryButton
             }
         }
@@ -124,12 +124,11 @@ struct MenuBarContentView: View {
 
     /// Primary play control that starts or resumes the timer.
     private var playButton: some View {
-        Button {
+        Button("Start timer", systemImage: "play.fill") {
             engine.start()
             focusedControl = .primaryButton
-        } label: {
-            Image(systemName: "play.fill")
         }
+        .labelStyle(.iconOnly)
         .buttonStyle(EmberRoundButtonStyle(filled: true))
         .focused($focusedControl, equals: .primaryButton)
         .accessibilityIdentifier("startTimerButton")
@@ -141,11 +140,10 @@ struct MenuBarContentView: View {
 
     /// Secondary pause control shown while the timer is running.
     private var pauseButton: some View {
-        Button {
+        Button("Pause timer", systemImage: "pause.fill") {
             engine.pause()
-        } label: {
-            Image(systemName: "pause.fill")
         }
+        .labelStyle(.iconOnly)
         .buttonStyle(EmberRoundButtonStyle(filled: false))
         .focused($focusedControl, equals: .primaryButton)
         .accessibilityIdentifier("pauseTimerButton")
@@ -176,9 +174,9 @@ struct MenuBarContentView: View {
     ///   - action: The button action to run on the next main-loop pass.
     ///   - control: The focus target that should remain active after the action completes.
     private func performFocusedAction(_ action: @escaping () -> Void, refocusing control: FocusedControl) {
-        DispatchQueue.main.async {
+        Task { @MainActor in
             action()
-            DispatchQueue.main.async {
+            Task { @MainActor in
                 focusedControl = control
             }
         }
@@ -187,12 +185,12 @@ struct MenuBarContentView: View {
 
 #Preview("Light") {
     MenuBarContentView()
-        .environmentObject(TimerEngine())
+        .environment(TimerEngine())
 }
 
 #Preview("Dark") {
     MenuBarContentView()
-        .environmentObject(TimerEngine())
+        .environment(TimerEngine())
         .preferredColorScheme(.dark)
 }
 #endif
