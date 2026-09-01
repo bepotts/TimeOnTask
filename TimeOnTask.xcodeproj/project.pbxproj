@@ -11,6 +11,8 @@
 		29E71C2A3045B11C00E428D3 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 29E71C293045B11C00E428D3 /* README.md */; };
 		29E71C2B3045B11C00E428D3 /* AGENTS.md in Resources */ = {isa = PBXBuildFile; fileRef = 29E71C273045B11C00E428D3 /* AGENTS.md */; };
 		29E71C2C3045B11C00E428D3 /* CLAUDE.md in Resources */ = {isa = PBXBuildFile; fileRef = 29E71C283045B11C00E428D3 /* CLAUDE.md */; };
+		29E71C913046D7D400E428D3 /* .swiftlint.yml in Resources */ = {isa = PBXBuildFile; fileRef = 29E71C903046D7D400E428D3 /* .swiftlint.yml */; };
+		29E71C923046D7D400E428D3 /* .swiftformat in Resources */ = {isa = PBXBuildFile; fileRef = 29E71C8F3046D7D400E428D3 /* .swiftformat */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -38,6 +40,8 @@
 		29E71C273045B11C00E428D3 /* AGENTS.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = AGENTS.md; sourceTree = "<group>"; };
 		29E71C283045B11C00E428D3 /* CLAUDE.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = CLAUDE.md; sourceTree = "<group>"; };
 		29E71C293045B11C00E428D3 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		29E71C8F3046D7D400E428D3 /* .swiftformat */ = {isa = PBXFileReference; lastKnownFileType = text; path = .swiftformat; sourceTree = "<group>"; };
+		29E71C903046D7D400E428D3 /* .swiftlint.yml */ = {isa = PBXFileReference; lastKnownFileType = text.yaml; path = .swiftlint.yml; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -86,6 +90,8 @@
 		29240C8C30324EC8001BDBCE = {
 			isa = PBXGroup;
 			children = (
+				29E71C8F3046D7D400E428D3 /* .swiftformat */,
+				29E71C903046D7D400E428D3 /* .swiftlint.yml */,
 				29E71C273045B11C00E428D3 /* AGENTS.md */,
 				29E71C283045B11C00E428D3 /* CLAUDE.md */,
 				29E71C293045B11C00E428D3 /* README.md */,
@@ -235,6 +241,8 @@
 				29E71C2B3045B11C00E428D3 /* AGENTS.md in Resources */,
 				29E71C2C3045B11C00E428D3 /* CLAUDE.md in Resources */,
 				29E71A77303FAD9B00E428D3 /* .gitignore in Resources */,
+				29E71C913046D7D400E428D3 /* .swiftlint.yml in Resources */,
+				29E71C923046D7D400E428D3 /* .swiftformat in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
