@@ -42,6 +42,7 @@
 		29E71C293045B11C00E428D3 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		29E71C8F3046D7D400E428D3 /* .swiftformat */ = {isa = PBXFileReference; lastKnownFileType = text; path = .swiftformat; sourceTree = "<group>"; };
 		29E71C903046D7D400E428D3 /* .swiftlint.yml */ = {isa = PBXFileReference; lastKnownFileType = text.yaml; path = .swiftlint.yml; sourceTree = "<group>"; };
+		29E71C93304791E900E428D3 /* Makefile */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -92,6 +93,7 @@
 			children = (
 				29E71C8F3046D7D400E428D3 /* .swiftformat */,
 				29E71C903046D7D400E428D3 /* .swiftlint.yml */,
+				29E71C93304791E900E428D3 /* Makefile */,
 				29E71C273045B11C00E428D3 /* AGENTS.md */,
 				29E71C283045B11C00E428D3 /* CLAUDE.md */,
 				29E71C293045B11C00E428D3 /* README.md */,
@@ -266,8 +268,8 @@
 		29240C9130324EC8001BDBCE /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
-			files = (
-			);
+				files = (
+				);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		29240CA030324ECA001BDBCE /* Sources */ = {

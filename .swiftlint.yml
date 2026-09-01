@@ -86,6 +86,8 @@ opt_in_rules:
 
 disabled_rules:
   # SwiftFormat owns these mechanical whitespace/comma/brace rules.
+  - file_name
+  - modifier_order
   - opening_brace
   - trailing_comma
   - trailing_whitespace

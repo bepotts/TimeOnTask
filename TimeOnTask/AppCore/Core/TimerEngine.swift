@@ -7,17 +7,18 @@ import Foundation
 import Observation
 import OSLog
 
+/// Coordinates timer state, countdown timing, and completion side effects.
 @MainActor
 @Observable
 final class TimerEngine {
     /// Default session length used when a timer engine is created without a custom duration.
     nonisolated static let defaultDuration: TimeInterval = .minutes(30)
     /// Largest session length the timer accepts from manual entry or presets.
-    nonisolated static let maximumDuration: TimeInterval = TimeInterval(maximumDisplayMinutes * 60 + maximumDisplaySeconds)
+    nonisolated static let maximumDuration: TimeInterval = .init(maximumDisplayMinutes * 60 + maximumDisplaySeconds)
     /// Largest minute value shown in the editable timer display.
-    nonisolated private static let maximumDisplayMinutes = 99
+    private nonisolated static let maximumDisplayMinutes = 99
     /// Largest second value shown in the editable timer display.
-    nonisolated private static let maximumDisplaySeconds = 99
+    private nonisolated static let maximumDisplaySeconds = 99
     /// Preset session lengths shown in the UI for quick timer selection.
     nonisolated static let presets: [TimeInterval] = [
         .minutes(15),
@@ -88,19 +89,21 @@ final class TimerEngine {
     ///   - sessionLabel: The starting label shown in the session name field.
     init(
         duration: TimeInterval = TimerEngine.defaultDuration,
-        sessionLabel: String = TimerEngine.randomSessionLabel()
+        sessionLabel: String = TimerEngine.randomSessionLabel(),
     ) {
         // Bounded starting value that keeps externally constructed engines within the displayable range.
         let clamped = TimerEngine.clampedDuration(duration)
         self.duration = clamped
         self.sessionLabel = sessionLabel
-        self.totalDuration = clamped
-        self.remaining = clamped
+        totalDuration = clamped
+        remaining = clamped
     }
 
     /// Fraction of the active session that has elapsed, used by the circular progress ring.
     var progress: Double {
-        guard totalDuration > 0 else { return 0 }
+        guard totalDuration > 0 else {
+            return 0
+        }
         return min(1, max(0, 1 - (remaining / totalDuration)))
     }
 
@@ -122,7 +125,9 @@ final class TimerEngine {
     /// - Parameters:
     ///   - seconds: The preset duration to apply in seconds.
     func selectPreset(_ seconds: TimeInterval) {
-        guard phase == .idle else { return }
+        guard phase == .idle else {
+            return
+        }
         let clamped = TimerEngine.clampedDuration(seconds)
         duration = clamped
         remaining = clamped
@@ -134,7 +139,9 @@ final class TimerEngine {
     /// - Parameters:
     ///   - seconds: The manually entered duration to apply in seconds.
     func setManualDuration(_ seconds: TimeInterval) {
-        guard phase == .idle || phase == .paused else { return }
+        guard phase == .idle || phase == .paused else {
+            return
+        }
         let clamped = TimerEngine.clampedDuration(seconds)
         duration = clamped
         remaining = clamped
@@ -146,14 +153,14 @@ final class TimerEngine {
     /// - Parameters:
     ///   - seconds: The proposed duration in seconds.
     /// - Returns: The duration clamped between zero and the maximum displayable timer value.
-    nonisolated private static func clampedDuration(_ seconds: TimeInterval) -> TimeInterval {
+    private nonisolated static func clampedDuration(_ seconds: TimeInterval) -> TimeInterval {
         min(max(0, seconds), maximumDuration)
     }
 
     /// Selects a random suggested label for a new focused session.
     ///
     /// - Returns: A whimsical default session label.
-    nonisolated private static func randomSessionLabel() -> String {
+    private nonisolated static func randomSessionLabel() -> String {
         sessionLabelSuggestions.randomElement() ?? "Focused Session"
     }
 
@@ -165,7 +172,7 @@ final class TimerEngine {
     /// - Parameters:
     ///   - seconds: The duration to format for display.
     /// - Returns: The minute and second values to render in the timer display.
-    nonisolated private static func displayComponents(for seconds: TimeInterval) -> (minutes: Int, seconds: Int) {
+    private nonisolated static func displayComponents(for seconds: TimeInterval) -> (minutes: Int, seconds: Int) {
         // Rounded-up whole seconds so the display does not show the next minute too early.
         let total = Int(clampedDuration(seconds).rounded(.up))
         let minutes = total / 60
@@ -177,7 +184,9 @@ final class TimerEngine {
 
     /// Starts or resumes the current timer session.
     func start() {
-        guard phase == .idle || phase == .paused else { return }
+        guard phase == .idle || phase == .paused else {
+            return
+        }
         logger.debug("Timer engine started")
         if phase == .idle {
             totalDuration = duration
@@ -191,7 +200,9 @@ final class TimerEngine {
 
     /// Pauses a running timer and preserves the wall-clock remaining time.
     func pause() {
-        guard phase == .running else { return }
+        guard phase == .running else {
+            return
+        }
         timer?.invalidate()
         timer = nil
         // Captured end date used to convert the paused wall-clock state back into remaining seconds.
@@ -232,7 +243,9 @@ final class TimerEngine {
     /// Refreshes remaining time from the current wall-clock end date.
     private func tick() {
         // Active finish time used to decide whether the session is still running.
-        guard let endDate else { return }
+        guard let endDate else {
+            return
+        }
         // Current remaining seconds based on the wall clock.
         let remainingNow = endDate.timeIntervalSinceNow
         if remainingNow <= 0 {
@@ -265,10 +278,15 @@ extension TimerEngine {
     }
 }
 
+/// Lifecycle phases supported by the timer engine.
 enum TimerPhase: Equatable {
+    /// Timer is ready to start from the selected duration.
     case idle
+    /// Timer is actively counting down.
     case running
+    /// Timer is stopped temporarily with remaining time preserved.
     case paused
+    /// Timer reached zero and is waiting to be reset.
     case complete
 }
 

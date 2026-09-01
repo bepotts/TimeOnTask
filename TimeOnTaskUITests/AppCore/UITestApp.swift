@@ -5,13 +5,15 @@
 
 import XCTest
 
+/// Shared helpers for launching TimeOnTask in platform UI tests.
 enum UITestApp {
     /// Launches a fresh TimeOnTask app instance for a UI test.
     ///
+    /// - Parameters:
+    ///   - app: The application instance to configure and launch.
     /// - Returns: The launched application under test.
-    static func launch() -> XCUIApplication {
+    static func launch(_ app: XCUIApplication = XCUIApplication()) -> XCUIApplication {
         // Application handle that XCTest binds to the configured test target.
-        let app = XCUIApplication()
         app.launchArguments.append(contentsOf: ["-ApplePersistenceIgnoreState", "YES"])
         app.launch()
         app.activate()

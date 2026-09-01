@@ -15,27 +15,27 @@ struct TimeOnTaskApp: App {
 
     /// Defines the app's visible scenes for each supported platform.
     var body: some Scene {
-#if os(macOS)
-        WindowGroup {
-            MacTimerView()
-                .environment(engine)
-        }
-        .windowResizability(.contentSize)
-        .defaultSize(width: 360, height: 440)
+        #if os(macOS)
+            WindowGroup {
+                MacTimerView()
+                    .environment(engine)
+            }
+            .windowResizability(.contentSize)
+            .defaultSize(width: 360, height: 440)
 
-        MenuBarExtra {
-            MenuBarContentView()
-                .environment(engine)
-        } label: {
-            MenuBarLabel()
-                .environment(engine)
-        }
-        .menuBarExtraStyle(.window)
-#else
-        WindowGroup {
-            IOSTimerView()
-                .environment(engine)
-        }
-#endif
+            MenuBarExtra {
+                MenuBarContentView()
+                    .environment(engine)
+            } label: {
+                MenuBarLabel()
+                    .environment(engine)
+            }
+            .menuBarExtraStyle(.window)
+        #else
+            WindowGroup {
+                IOSTimerView()
+                    .environment(engine)
+            }
+        #endif
     }
 }

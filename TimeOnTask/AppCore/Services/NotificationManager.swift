@@ -5,9 +5,10 @@
 
 import UserNotifications
 #if os(macOS)
-import AppKit
+    import AppKit
 #endif
 
+/// Handles notification authorization, completion alerts, and platform sounds.
 @MainActor
 final class NotificationManager {
     /// Singleton notification helper used by the timer engine.
@@ -22,7 +23,9 @@ final class NotificationManager {
             // System notification center used to inspect and request alert permissions.
             let center = UNUserNotificationCenter.current()
             let settings = await center.notificationSettings()
-            guard settings.authorizationStatus == .notDetermined else { return }
+            guard settings.authorizationStatus == .notDetermined else {
+                return
+            }
             _ = try? await center.requestAuthorization(options: [.alert, .sound])
         }
     }
@@ -45,8 +48,8 @@ final class NotificationManager {
             try? await UNUserNotificationCenter.current().add(request)
         }
 
-#if os(macOS)
-        NSSound(named: "Glass")?.play()
-#endif
+        #if os(macOS)
+            NSSound(named: "Glass")?.play()
+        #endif
     }
 }
