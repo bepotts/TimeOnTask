@@ -3,6 +3,17 @@ SCHEME ?= TimeOnTask
 CONFIGURATION ?= Debug
 SWIFTLINT ?= swiftlint
 SWIFTFORMAT ?= swiftformat
+TEST_OUTPUT_DIR ?= TestReports
+TEST_OUTPUT_FILE ?= $(TEST_OUTPUT_DIR)/$@.log
+
+SHELL := /bin/bash
+
+define RUN_AND_LOG
+@mkdir -p "$(TEST_OUTPUT_DIR)"
+@set -o pipefail; \
+	$(1) 2>&1 | tee "$(TEST_OUTPUT_FILE)"
+@echo "Test output saved to $(TEST_OUTPUT_FILE)"
+endef
 
 .PHONY: help build test test-unit test-ui lint format style
 
@@ -15,18 +26,22 @@ help:
 	@echo "  make lint       Run SwiftLint"
 	@echo "  make format     Run SwiftFormat"
 	@echo "  make style      Run SwiftFormat, then SwiftLint"
+	@echo ""
+	@echo "Test output:"
+	@echo "  Defaults to $(TEST_OUTPUT_DIR)/<target>.log"
+	@echo "  Override with TEST_OUTPUT_FILE=path/to/output.log"
 
 build:
 	xcodebuild -project "$(PROJECT)" -scheme "$(SCHEME)" -configuration "$(CONFIGURATION)" build
 
 test-unit:
-	xcodebuild -project "$(PROJECT)" -scheme "$(SCHEME)" test -only-testing:TimeOnTaskTests
+	$(call RUN_AND_LOG,xcodebuild -project "$(PROJECT)" -scheme "$(SCHEME)" test -only-testing:TimeOnTaskTests)
 
 test-ui:
-	xcodebuild -project "$(PROJECT)" -scheme "$(SCHEME)" test -only-testing:TimeOnTaskUITests
+	$(call RUN_AND_LOG,xcodebuild -project "$(PROJECT)" -scheme "$(SCHEME)" test -only-testing:TimeOnTaskUITests)
 
 test:
-	xcodebuild -project "$(PROJECT)" -scheme "$(SCHEME)" test
+	$(call RUN_AND_LOG,xcodebuild -project "$(PROJECT)" -scheme "$(SCHEME)" test)
 
 lint:
 	$(SWIFTLINT) lint --config .swiftlint.yml --no-cache

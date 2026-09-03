@@ -13,6 +13,7 @@ xcuserdata/
 # Xcode build output
 build/
 DerivedData/
+TestReports/
 
 # Xcode generated files
 *.xccheckout
