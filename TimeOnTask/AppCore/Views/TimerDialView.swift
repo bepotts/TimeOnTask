@@ -88,6 +88,7 @@ struct TimerDialView: View {
                             .monospacedDigit()
                     }
                     .buttonStyle(.plain)
+                    .disabled(!isTimeEditable)
                     .contentShape(Rectangle())
                     .accessibilityIdentifier("timerRemainingText")
                     .accessibilityLabel(engine.formattedRemaining)
