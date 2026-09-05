@@ -1,0 +1,19 @@
+--swiftversion 6.2
+--indent 4
+--tabwidth 4
+--maxwidth 120
+--wraparguments before-first
+--wrapparameters before-first
+--wrapcollections before-first
+--closingparen balanced
+--commas always
+--semicolons never
+--self remove
+--stripunusedargs closure-only
+--ifdef indent
+--trimwhitespace always
+
+--exclude .build
+--exclude DerivedData
+--exclude TimeOnTask.xcodeproj
+--exclude TimeOnTask.xcworkspace

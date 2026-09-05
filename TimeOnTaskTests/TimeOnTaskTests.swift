@@ -8,9 +8,9 @@
 import Testing
 @testable import TimeOnTask
 
+/// Unit tests for shared timer engine behavior.
 @MainActor
 struct TimeOnTaskTests {
-
     /// Verifies the timer engine starts with the expected default duration.
     @Test func defaultsToThirtyMinutes() {
         // Fresh timer engine used to verify default startup state.

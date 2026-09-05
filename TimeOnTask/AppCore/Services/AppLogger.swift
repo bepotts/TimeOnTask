@@ -3,7 +3,8 @@
 //  TimeOnTask
 //
 
-import OSLog
+import Foundation
+import os
 
 extension Logger {
     /// App-wide subsystem used to group logs from TimeOnTask.

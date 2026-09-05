@@ -13,18 +13,19 @@ extension Color {
     init(hex: String) {
         // Hex string normalized so Scanner can read it with or without a leading #.
         var sanitized = hex.trimmingCharacters(in: .whitespacesAndNewlines)
-        sanitized = sanitized.replacingOccurrences(of: "#", with: "")
+        sanitized = sanitized.replacing("#", with: "")
         // Numeric RGB value parsed from the normalized hex string.
         var rgb: UInt64 = 0
         Scanner(string: sanitized).scanHexInt64(&rgb)
         self.init(
             red: Double((rgb & 0xFF0000) >> 16) / 255,
             green: Double((rgb & 0x00FF00) >> 8) / 255,
-            blue: Double(rgb & 0x0000FF) / 255
+            blue: Double(rgb & 0x0000FF) / 255,
         )
     }
 }
 
+/// Shared colors and gradients used by the Ember visual style.
 enum EmberColor {
     /// Warm starting color used for filled controls and gradients.
     static let accentStart = Color(hex: "F2A65A")
@@ -34,7 +35,7 @@ enum EmberColor {
     static let gradient = LinearGradient(
         colors: [accentStart, accentEnd],
         startPoint: .topLeading,
-        endPoint: .bottomTrailing
+        endPoint: .bottomTrailing,
     )
 }
 
