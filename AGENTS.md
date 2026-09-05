@@ -34,8 +34,6 @@ Run only UI tests:
 xcodebuild -scheme TimeOnTask -project TimeOnTask.xcodeproj test -only-testing:TimeOnTaskUITests
 ```
 
-This is a plain Xcode project. There is no `Package.swift` and no separate lint configuration.
-
 ## Core instructions
 * Target iOS 26.0 or later. (Yes, it definitely exists.)
 * Swift 6.2 or later, using modern Swift concurrency. Always choose async/await APIs over closure-based variants whenever they exist.
