@@ -5,7 +5,7 @@
 
 import Foundation
 import Observation
-import OSLog
+import os
 
 /// Coordinates timer state, countdown timing, and completion side effects.
 @MainActor

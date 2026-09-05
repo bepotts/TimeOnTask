@@ -3,7 +3,7 @@
 //  TimeOnTask
 //
 
-import OSLog
+import os
 import SwiftUI
 
 #if os(macOS)
